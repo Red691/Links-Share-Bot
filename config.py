@@ -5,16 +5,16 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 # Recommended
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
-APP_ID = int(os.environ.get("APP_ID", ""))
-API_HASH = os.environ.get("API_HASH", "")
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7280187591:AAH9dwvMM74fb4ZAk6T5XpLERTk5ZlHHGxw")
+APP_ID = int(os.environ.get("APP_ID", "20594537"))
+API_HASH = os.environ.get("API_HASH", "c505a4e5bb7d482197875888af544f17")
 
 # Main
 OWNER_ID = int(os.environ.get("OWNER_ID", "5770911041"))
 PORT = os.environ.get("PORT", "8080")
 
 # Database
-DB_URI = os.environ.get("DB_URI", "")
+DB_URI = os.environ.get("DB_URI", "mongodb+srv://kumarnikhil05848:Kumarnikhil1513832380@cluster0.1nr8lgj.mongodb.net/?appName=Cluster0")
 DB_NAME = os.environ.get("DB_NAME", "sensei")
 
 #Auto approve 
@@ -57,7 +57,7 @@ USER_REPLY_TEXT = "⚠️ ғᴜᴄᴋ ʏᴏᴜ, ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴍʏ
 
 # Logging
 LOG_FILE_NAME = "links-sharingbot.txt"
-DATABASE_CHANNEL = int(os.environ.get("DATABASE_CHANNEL", "")) # Channel where user links are stored
+DATABASE_CHANNEL = int(os.environ.get("DATABASE_CHANNEL", "-1002642868064")) # Channel where user links are stored
 #--- ---- ---- --- --- --- - -- -  - - - - - - - - - - - --  - -
 
 try:
