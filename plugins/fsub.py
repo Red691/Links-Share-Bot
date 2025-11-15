@@ -13,8 +13,8 @@ ENABLE_FSUB = bool(os.environ.get("ENABLE_FSUB", True))
 
 # Your FSUB list
 FSUB = {
-    "Main Channel": -1002687789677,
-    "Backup Channel": -1002299128264
+    "Main Channel": -1002716491516,
+    "Backup Channel": -1002942665973
 }
 
 
