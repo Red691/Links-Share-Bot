@@ -1,4 +1,6 @@
-# +++ Modified By Yato [telegram username: @i_killed_my_clan & @ProYato] +++ # aNDI BANDI SANDI JISNE BHI CREDIT HATAYA USKI BANDI RAndi 
+# +++ Modified By Yato [telegram username: @i_killed_my_clan & @ProYato] +++ #
+# aNDI BANDI SANDI JISNE BHI CREDIT HATAYA USKI BANDI RAndi 
+
 import base64
 import re
 import asyncio
@@ -12,18 +14,23 @@ from pyrogram.filters import Filter
 from config import OWNER_ID
 from database.database import is_admin, get_fsub
 
+
 class IsAdmin(Filter):
     async def __call__(self, client, message):
         return await is_admin(message.from_user.id)
 
+
 is_admin_filter = IsAdmin()
+
 
 class IsOwnerOrAdmin(Filter):
     async def __call__(self, client, message):
         user_id = message.from_user.id
         return user_id == OWNER_ID or await is_admin(user_id)
 
+
 is_owner_or_admin = IsOwnerOrAdmin()
+
 
 async def encode(string):
     string_bytes = string.encode("ascii")
@@ -31,12 +38,15 @@ async def encode(string):
     base64_string = (base64_bytes.decode("ascii")).strip("=")
     return base64_string
 
+
 async def decode(base64_string):
     base64_string = base64_string.strip("=")
     base64_bytes = (base64_string + "=" * (-len(base64_string) % 4)).encode("ascii")
     string_bytes = base64.urlsafe_b64decode(base64_bytes)
     string = string_bytes.decode("ascii")
     return string
+
+
 def get_readable_time(seconds: int) -> str:
     count = 0
     up_time = ""
@@ -56,10 +66,8 @@ def get_readable_time(seconds: int) -> str:
         time_list.append(int(result))
         seconds = int(remainder)
 
-    hmm = len(time_list)
-
-    for x in range(hmm):
-        time_list[x] = str(time_list[x]) + time_suffix_list[x]
+    for i in range(len(time_list)):
+        time_list[i] = str(time_list[i]) + time_suffix_list[i]
 
     if len(time_list) == 4:
         up_time += f"{time_list.pop()}, "
@@ -67,7 +75,9 @@ def get_readable_time(seconds: int) -> str:
     time_list.reverse()
     up_time += ":".join(time_list)
 
-    return up_time    
+    return up_time
+
+
 async def force_sub(client, message):
     if FORCE_SUB == "False":
         return True
@@ -80,10 +90,11 @@ async def force_sub(client, message):
         return True
 
     try:
-        await client.get_chat_member(fsub_channel['chat_id'], message.from_user.id)
+        await client.get_chat_member(fsub_channel["chat_id"], message.from_user.id)
+
     except UserNotParticipant:
         try:
-            invite_link = await client.create_chat_invite_link(fsub_channel['chat_id'])
+            invite_link = await client.create_chat_invite_link(fsub_channel["chat_id"])
         except Exception as e:
             print(e)
             return False
@@ -95,10 +106,12 @@ async def force_sub(client, message):
                 reply_markup=InlineKeyboardMarkup(
                     [
                         [
-                            InlineKeyboardButton("Join Channel", url=invite_link.invite_link)
+                            InlineKeyboardButton(
+                                "Join Channel", url=invite_link.invite_link
+                            )
                         ]
                     ]
-                )
+                ),
             )
         else:
             await message.reply_text(
@@ -106,12 +119,13 @@ async def force_sub(client, message):
                 reply_markup=InlineKeyboardMarkup(
                     [
                         [
-                            InlineKeyboardButton("Join Channel", url=invite_link.invite_link)
+                            InlineKeyboardButton(
+                                "Join Channel", url=invite_link.invite_link
+                            )
                         ]
                     ]
-                )
+                ),
             )
         return False
 
-    return True
     return True
