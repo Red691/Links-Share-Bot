@@ -1,82 +1,43 @@
-import os
-import logging
 from pyrogram import Client, filters
-from pyrogram.errors import UserNotParticipant, ChatAdminRequired, PeerIdInvalid, FloodWait
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from pyrogram.types import Message
+from config import OWNER_ID
+from database.database import add_fsub, rm_fsub, get_fsub
 from bot import Bot
+from pyrogram.enums import ChatType
 
-log = logging.getLogger(__name__)
+@Bot.on_message(filters.command('addfsub') & filters.user(OWNER_ID))
+async def add_fsub_command(client: Bot, message: Message):
+    if len(message.command) != 2:
+        return await message.reply_text("Please provide a channel ID. Usage: /addfsub -100xxxxxxxx")
 
+    try:
+        channel_id = int(message.command[1])
+    except ValueError:
+        return await message.reply_text("Invalid channel ID. Please provide a valid integer.")
 
-# ===================== FSUB VARIABLES =====================
-ENABLE_FSUB = bool(os.environ.get("ENABLE_FSUB", True))
+    try:
+        chat = await client.get_chat(channel_id)
+    except Exception as e:
+        return await message.reply_text(f"Failed to access the chat. Make sure the bot is a member. Error: {e}")
 
-# Your FSUB list
-FSUB = {
-    "Main Channel": -1002716491516,
-    "Backup Channel": -1002942665973
-}
+    if chat.type not in [ChatType.CHANNEL, ChatType.SUPERGROUP]:
+        return await message.reply_text(f"The provided ID is not a channel or supergroup. Detected type: {chat.type}")
 
+    await add_fsub(channel_id)
+    await message.reply_text(f"Successfully added {chat.title} as the force subscribe channel.")
+@Bot.on_message(filters.command('rmfsub') & filters.user(OWNER_ID))
+async def rm_fsub_command(client: Bot, message: Message):
+    await rm_fsub()
+    await message.reply_text("Successfully removed the force subscribe channel.")
 
-# ===================== FORCE SUB CHECK =====================
-async def check_force_sub(client: Client, user_id: int, message) -> bool:
-
-    if not ENABLE_FSUB:
-        return True  # FSUB disabled → skip
-
-    not_joined = []
-
-    for btn_name, channel_id in FSUB.items():
+@Bot.on_message(filters.command('fsub') & filters.user(OWNER_ID))
+async def fsub_command(client: Bot, message: Message):
+    fsub_channel = await get_fsub()
+    if fsub_channel:
         try:
-            member = await client.get_chat_member(channel_id, user_id)
-            if member.status in ("left", "kicked"):
-                not_joined.append((btn_name, channel_id))
-
-        except UserNotParticipant:
-            not_joined.append((btn_name, channel_id))
-
-        except ChatAdminRequired:
-            await message.reply_text("⚠️ Bot must be admin in FSUB channels!")
-            return False
-
+            chat = await client.get_chat(fsub_channel['chat_id'])
+            await message.reply_text(f"Current force subscribe channel: {chat.title} ({fsub_channel['chat_id']})")
         except Exception as e:
-            log.error(f"⚠️ Error checking FSUB for channel {channel_id}: {e}")
-            return False
-
-    if not not_joined:
-        return True  # User joined everything
-
-    # Buttons
-    buttons = []
-    row = []
-
-    for i, (btn_name, channel_id) in enumerate(not_joined, start=1):
-        try:
-            invite = await client.create_chat_invite_link(channel_id)
-            row.append(InlineKeyboardButton(f"{btn_name}", url=invite.invite_link))
-        except:
-            row.append(InlineKeyboardButton(f"{btn_name}", url="https://t.me"))
-        
-        if i % 2 == 0:
-            buttons.append(row)
-            row = []
-
-    if row:
-        buttons.append(row)
-
-    buttons.append([InlineKeyboardButton("I Joined ✅", callback_data="fsub_check")])
-
-    await message.reply_text(
-        "⚠️ Please join the required channels to continue:",
-        reply_markup=InlineKeyboardMarkup(buttons)
-    )
-
-    return False
-
-
-# ===================== CALLBACK =====================
-@Bot.on_callback_query(filters.regex("fsub_check"))
-async def recheck_force_sub(client, cq: CallbackQuery):
-    ok = await check_force_sub(client, cq.from_user.id, cq.message)
-    if ok:
-        await cq.message.edit_text("✅ Verified! Send /start again.")
+            await message.reply_text(f"Error: {e}")
+    else:
+        await message.reply_text("No force subscribe channel is currently set.")
