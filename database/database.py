@@ -11,7 +11,7 @@ database = dbclient[DB_NAME]
 # collections
 user_data = database['users']
 channels_collection = database['channels']
-fsub_channels_collection = database['fsub_channels']
+fsub = database['fsub']
 
 async def add_user(user_id: int) -> bool:
     """Add a user to the database if they don't exist."""
@@ -267,46 +267,7 @@ async def get_link_creation_time(channel_id: int):
     except Exception as e:
         print(f"Error fetching link creation time for channel {channel_id}: {e}")
         return None
-
-async def add_fsub_channel(channel_id: int) -> bool:
-    """Add a channel to the FSub list."""
-    if not isinstance(channel_id, int):
-        print(f"Invalid channel_id: {channel_id}")
-        return False
-    
-    try:
-        existing_channel = await fsub_channels_collection.find_one({'channel_id': channel_id})
-        if existing_channel:
-            return False
         
-        await fsub_channels_collection.insert_one({
-            'channel_id': channel_id,
-            'created_at': datetime.utcnow(),
-            'status': 'active'
-        })
-        return True
-    except Exception as e:
-        print(f"Error adding FSub channel {channel_id}: {e}")
-        return False
-
-async def remove_fsub_channel(channel_id: int) -> bool:
-    """Remove a channel from the FSub list."""
-    try:
-        result = await fsub_channels_collection.delete_one({'channel_id': channel_id})
-        return result.deleted_count > 0
-    except Exception as e:
-        print(f"Error removing FSub channel {channel_id}: {e}")
-        return False
-
-async def get_fsub_channels() -> List[int]:
-    """Get all active FSub channel IDs."""
-    try:
-        channels = await fsub_channels_collection.find({'status': 'active'}).to_list(None)
-        return [channel['channel_id'] for channel in channels]
-    except Exception as e:
-        print(f"Error fetching FSub channels: {e}")
-        return []
-
 async def get_original_link(channel_id: int) -> Optional[str]:
     """Get the original link stored for a channel (used by /genlink)."""
     if not isinstance(channel_id, int):
@@ -344,3 +305,13 @@ async def is_approval_off(channel_id: int) -> bool:
     except Exception as e:
         print(f"Error checking approval_off for channel {channel_id}: {e}")
         return False
+
+async def add_fsub(chat_id: int):
+    await fsub.update_one({'_id': 'fsub_chat'}, {'$set': {'chat_id': chat_id}}, upsert=True)
+
+async def rm_fsub():
+    await fsub.delete_one({'_id': 'fsub_chat'})
+
+async def get_fsub():
+    return await fsub.find_one({'_id': 'fsub_chat'})
+        
