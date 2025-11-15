@@ -4,13 +4,13 @@ import re
 import asyncio
 from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus
-from config import ADMINS
+from config import ADMINS, FORCE_SUB, FSUB_PIC
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.filters import Filter
 from config import OWNER_ID
-from database.database import is_admin
+from database.database import is_admin, get_fsub
 
 class IsAdmin(Filter):
     async def __call__(self, client, message):
@@ -58,3 +58,50 @@ def get_readable_time(seconds: int) -> str:
     time_list.reverse()
     up_time += ":".join(time_list)
     return up_time
+    
+    async def force_sub(client, message):
+    if FORCE_SUB == "False":
+        return True
+
+    if message.from_user.id in ADMINS:
+        return True
+
+    fsub_channel = await get_fsub()
+    if not fsub_channel:
+        return True
+
+    try:
+        await client.get_chat_member(fsub_channel['chat_id'], message.from_user.id)
+    except UserNotParticipant:
+        try:
+            invite_link = await client.create_chat_invite_link(fsub_channel['chat_id'])
+        except Exception as e:
+            print(e)
+            return False
+
+        if FSUB_PIC:
+            await message.reply_photo(
+                photo=FSUB_PIC,
+                caption="You must join our channel to use this bot.",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton("Join Channel", url=invite_link.invite_link)
+                        ]
+                    ]
+                )
+            )
+        else:
+            await message.reply_text(
+                "You must join our channel to use this bot.",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton("Join Channel", url=invite_link.invite_link)
+                        ]
+                    ]
+                )
+            )
+        return False
+
+    return True
