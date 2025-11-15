@@ -59,10 +59,9 @@ def get_readable_time(seconds: int) -> str:
     up_time += ":".join(time_list)
     return up_time
     
-    def check_fsub():
+    async def force_sub(client, message):
     if FORCE_SUB == "False":
-        return False
-    return True
+        return True
 
     if message.from_user.id in ADMINS:
         return True
@@ -105,4 +104,5 @@ def get_readable_time(seconds: int) -> str:
             )
         return False
 
+    return True
     return True
