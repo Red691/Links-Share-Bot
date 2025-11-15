@@ -20,7 +20,6 @@ from config import *
 from database.database import *
 from plugins.newpost import revoke_invite_after_5_minutes
 from helper_func import *
-from .fsub import check_force_sub
 
 # Create a lock dictionary for each channel to prevent concurrent link generation
 channel_locks = defaultdict(asyncio.Lock)
@@ -33,6 +32,8 @@ is_canceled = False
 
 @Bot.on_message(filters.command('start') & filters.private)
 async def start_command(client: Bot, message: Message):
+    if not await force_sub(client, message):
+        return
     user_id = message.from_user.id
 
     if user_id in user_banned_until:
@@ -42,11 +43,7 @@ async def start_command(client: Bot, message: Message):
                 parse_mode=ParseMode.HTML
             )
             
-    await add_user(user_id)
-    ok = await check_force_sub(client, user_id, message)
-    if not ok:
-        return
-
+ 
    # ✅ Check Force Subscription
     #if not await is_subscribed(client, user_id):
         #await temp.delete()
