@@ -59,7 +59,7 @@ def get_readable_time(seconds: int) -> str:
     up_time += ":".join(time_list)
     return up_time
     
-    async def force_sub(client, message):
+async def force_sub(client, message):
     if FORCE_SUB == "False":
         return True
 
