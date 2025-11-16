@@ -63,6 +63,8 @@ DATABASE_CHANNEL = int(os.environ.get("DATABASE_CHANNEL", "-1002642868064")) # C
 FORCE_SUB = os.environ.get("FORCE_SUB", "True")
 FSUB_PIC = os.environ.get("FSUB_PIC", "https://i.ibb.co/xK56gh8W/photo-2025-11-14-13-10-23-7572567765697953804.jpg")
 
+REQUEST_FSUB_MODE = os.environ.get("REQUEST_FSUB_MODE", "False")
+
 try:
     ADMINS = []
     for x in (os.environ.get("ADMINS", "5770911041").split()):
