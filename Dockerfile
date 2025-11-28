@@ -1,7 +1,6 @@
-# Base image
-FROM python:3.8-slim-buster
+FROM python:3.9-slim
 
-# Install build tools required for TgCrypto
+# Install build tools
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -9,15 +8,11 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
+COPY repo /app
 
-# Copy requirements and install
-COPY requirements.txt requirements.txt
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN if [ -f "/app/requirements.txt" ]; then \
+    pip install --no-cache-dir -r /app/requirements.txt; \
+    fi
 
-# Copy all project files
-COPY . .
-
-# Run bot
 CMD ["python3", "main.py"]
