@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-# Install build tools
+# Install build tools required for TgCrypto
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
