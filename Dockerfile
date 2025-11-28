@@ -1,18 +1,10 @@
-FROM python:3.9-slim
-
-# Install build tools required for TgCrypto
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    make \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
-
+FROM python:3.8-slim-buster
 WORKDIR /app
-COPY repo /app
 
-RUN if [ -f "/app/requirements.txt" ]; then \
-    pip install --no-cache-dir -r /app/requirements.txt; \
-    fi
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
 
-CMD ["python3", "main.py"]
+COPY . .
+
+CMD python3 main.py
+# +++ Modified By Yato [telegram username: @i_killed_my_clan & @ProYato] +++ # aNDI BANDI SANDI JISNE BHI CREDIT HATAYA USKI BANDI RAndi 
