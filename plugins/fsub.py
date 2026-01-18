@@ -5,7 +5,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from config import ADMINS
 import database.database as db
 from helper_func import is_owner_or_admin, is_subscribed
-
+from bot import Bot
 # ---------------- ADD CHANNEL ---------------- #
 @Bot.on_message(filters.command('addchnl') & filters.private & is_owner_or_admin)
 async def add_force_sub(client: Client, message: Message):
