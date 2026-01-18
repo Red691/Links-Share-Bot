@@ -17,7 +17,7 @@ import random
 from bot import Bot
 from datetime import datetime, timedelta
 from config import *
-from database.database import *
+from database.database import db
 from plugins.newpost import revoke_invite_after_5_minutes
 from helper_func import *
 
