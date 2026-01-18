@@ -6,7 +6,7 @@ from pyrogram.enums import ChatMemberStatus
 from pyrogram.filters import Filter
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import OWNER_ID
-import database.database as db
+from database import db
 
 # ---------------- ADMIN FILTERS ---------------- #
 
