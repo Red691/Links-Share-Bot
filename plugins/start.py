@@ -17,7 +17,7 @@ from pyrogram.errors import FloodWait, UserNotParticipant, UserIsBlocked, InputU
 
 from bot import Bot
 from config import *  # OWNER_ID, ADMINS etc
-from database.database import is_admin, add_user  # admin check
+from database.database import is_admin, add_user, db  # admin check
 
 # ---------------- Helper functions ---------------- #
 from helper_func import is_subscribed, is_sub, is_admin_filter, is_owner_or_admin, encode, decode, get_readable_time
