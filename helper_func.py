@@ -166,4 +166,4 @@ def get_exp_time(seconds):
     return result
 
 subscribed = filters.create(is_subscribed)
-admin = filters.create(check_admin)
+admin = is_admin_filter 
