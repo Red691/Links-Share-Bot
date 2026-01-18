@@ -1,27 +1,40 @@
-
 import asyncio
 import base64
 import time
-from asyncio import Lock
+import os
+import random
+from asyncio import Lock, sleep
 from collections import defaultdict
+from datetime import datetime, timedelta
+
 from pyrogram import Client, filters
 from pyrogram.enums import ParseMode, ChatMemberStatus, ChatAction
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto
+from pyrogram.types import (
+    Message, InlineKeyboardMarkup, InlineKeyboardButton,
+    CallbackQuery, InputMediaPhoto
+)
 from pyrogram.errors import FloodWait, UserNotParticipant, UserIsBlocked, InputUserDeactivated
-import os
-import asyncio
-from asyncio import sleep
-from asyncio import Lock
-import random 
 
 from bot import Bot
-from datetime import datetime, timedelta
-from config import *
-from database.database import *
-from plugins.newpost import revoke_invite_after_5_minutes
-from helper_func import *
+from config import *  # OWNER_ID, ADMINS etc
+from database.database import is_admin  # admin check
 
-# Create a lock dictionary for each channel to prevent concurrent link generation
+# ---------------- Helper functions ---------------- #
+from helper_func import (
+    # Force-sub system
+    is_subscribed,
+    is_sub,
+    is_admin_filter,
+    is_owner_or_admin,
+
+    # Utilities
+    encode,
+    decode,
+    get_readable_time
+)
+
+# Optional: agar aap revoke_invite_after_5_minutes use kar rahe ho
+from plugins.newpost import revoke_invite_after_5_minutes# Create a lock dictionary for each channel to prevent concurrent link generation
 channel_locks = defaultdict(asyncio.Lock)
 
 user_banned_until = {}
