@@ -29,7 +29,7 @@ is_owner_or_admin = IsOwnerOrAdmin()
 # ------------------ FORCE SUBSCRIBE SYSTEM ------------------ #
 
 async def is_subscribed(client, user_id):
-    channel_ids = await db.show_channels()
+    channel_ids = await show_channels()  # use helper function, not db.show_channels()
 
     if not channel_ids:
         return True
@@ -39,7 +39,7 @@ async def is_subscribed(client, user_id):
 
     for cid in channel_ids:
         if not await is_sub(client, user_id, cid):
-            mode = await db.get_channel_mode(cid)
+            mode = await get_channel_mode(cid)  # use helper
             if mode == "on":
                 await asyncio.sleep(2)
                 if await is_sub(client, user_id, cid):
@@ -60,16 +60,15 @@ async def is_sub(client, user_id, channel_id):
         }
 
     except UserNotParticipant:
-        mode = await db.get_channel_mode(channel_id)
+        mode = await get_channel_mode(channel_id)  # use helper
         if mode == "on":
-            exists = await db.req_user_exist(channel_id, user_id)
+            exists = await req_user_exist(channel_id, user_id)  # use helper
             return exists
         return False
 
     except Exception as e:
         print(f"[!] Error in is_sub(): {e}")
         return False
-
 
 subscribed = filters.create(is_subscribed)
 
