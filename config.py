@@ -8,6 +8,7 @@ from logging.handlers import RotatingFileHandler
 TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "8247132120:AAF5zel-SHM7oTXHj2fxyPlh-CB_0HbFqL4")
 APP_ID = int(os.environ.get("APP_ID", ""))
 API_HASH = os.environ.get("API_HASH", "")
+FSUB_LINK_EXPIRY = int(os.getenv("FSUB_LINK_EXPIRY", "100"))  # 0 means no expiry
 
 # Main
 OWNER_ID = int(os.environ.get("OWNER_ID", "5770911041"))
