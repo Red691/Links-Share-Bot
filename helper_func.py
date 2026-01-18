@@ -27,7 +27,7 @@ is_owner_or_admin = IsOwnerOrAdmin()
 
 
 
-    async def is_subscribed(client, user_id):
+async def is_subscribed(client, user_id):
     channel_ids = await db.show_channels()
 
     if not channel_ids:
