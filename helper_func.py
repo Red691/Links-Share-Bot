@@ -1,53 +1,46 @@
-# +++ Modified By Yato [telegram username: @i_killed_my_clan & @ProYato] +++ # aNDI BANDI SANDI JISNE BHI CREDIT HATAYA USKI BANDI RAndi 
+# +++ Modified By Yato [telegram username: @i_killed_my_clan & @ProYato] +++ #
 import base64
-import re
 import asyncio
 from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus
-from config import ADMINS
-from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
-from pyrogram.errors import FloodWait
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.filters import Filter
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import OWNER_ID
-from database.database import is_admin
+import database.database as db
+
+# ---------------- ADMIN FILTERS ---------------- #
 
 class IsAdmin(Filter):
     async def __call__(self, client, message):
-        return await is_admin(message.from_user.id)
+        return await db.is_admin(message.from_user.id)
 
 is_admin_filter = IsAdmin()
 
 class IsOwnerOrAdmin(Filter):
     async def __call__(self, client, message):
         user_id = message.from_user.id
-        return user_id == OWNER_ID or await is_admin(user_id)
+        return user_id == OWNER_ID or await db.is_admin(user_id)
 
 is_owner_or_admin = IsOwnerOrAdmin()
 
-
-# ------------------ FORCE SUBSCRIBE SYSTEM ------------------ #
+# ---------------- FORCE SUBSCRIBE SYSTEM ---------------- #
 
 async def is_subscribed(client, user_id):
-    channel_ids = await show_channels()  # use helper function, not db.show_channels()
-
+    channel_ids = await db.show_channels()
     if not channel_ids:
         return True
-
     if user_id == OWNER_ID:
         return True
 
     for cid in channel_ids:
         if not await is_sub(client, user_id, cid):
-            mode = await get_channel_mode(cid)  # use helper
+            mode = await db.get_channel_mode(cid)
             if mode == "on":
                 await asyncio.sleep(2)
                 if await is_sub(client, user_id, cid):
                     continue
             return False
-
     return True
-
 
 async def is_sub(client, user_id, channel_id):
     try:
@@ -58,34 +51,32 @@ async def is_sub(client, user_id, channel_id):
             ChatMemberStatus.ADMINISTRATOR,
             ChatMemberStatus.MEMBER
         }
-
-    except UserNotParticipant:
-        mode = await get_channel_mode(channel_id)  # use helper
-        if mode == "on":
-            exists = await req_user_exist(channel_id, user_id)  # use helper
-            return exists
-        return False
-
     except Exception as e:
+        from pyrogram.errors import UserNotParticipant
+        if isinstance(e, UserNotParticipant):
+            mode = await db.get_channel_mode(channel_id)
+            if mode == "on":
+                return await db.req_user_exist(channel_id, user_id)
+            return False
         print(f"[!] Error in is_sub(): {e}")
         return False
 
 subscribed = filters.create(is_subscribed)
 
-
+# ---------------- BASE64 ENCODE / DECODE ---------------- #
 
 async def encode(string):
     string_bytes = string.encode("ascii")
     base64_bytes = base64.urlsafe_b64encode(string_bytes)
-    base64_string = (base64_bytes.decode("ascii")).strip("=")
-    return base64_string
+    return base64_bytes.decode("ascii").strip("=")
 
 async def decode(base64_string):
     base64_string = base64_string.strip("=")
     base64_bytes = (base64_string + "=" * (-len(base64_string) % 4)).encode("ascii")
     string_bytes = base64.urlsafe_b64decode(base64_bytes)
-    string = string_bytes.decode("ascii")
-    return string
+    return string_bytes.decode("ascii")
+
+# ---------------- READABLE TIME ---------------- #
 
 def get_readable_time(seconds: int) -> str:
     count = 0
