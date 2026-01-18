@@ -20,7 +20,7 @@ from config import *  # OWNER_ID, ADMINS etc
 from database.database import is_admin  # admin check
 
 # ---------------- Helper functions ---------------- #
-from helper_func import is_subscribed, is_sub, is_admin_filter, is_owner_or_admin, add_user, encode, decode, get_readable_time
+from helper_func import is_subscribed, is_sub, is_admin_filter, is_owner_or_admin, encode, decode, get_readable_time
 # Optional: agar aap revoke_invite_after_5_minutes use kar rahe ho
 from plugins.newpost import revoke_invite_after_5_minutes# Create a lock dictionary for each channel to prevent concurrent link generation
 channel_locks = defaultdict(asyncio.Lock)
