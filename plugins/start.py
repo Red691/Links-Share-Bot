@@ -26,6 +26,7 @@ from helper_func import (
     is_sub,
     is_admin_filter,
     is_owner_or_admin,
+    add_user,
 
     # Utilities
     encode,
