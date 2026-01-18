@@ -23,6 +23,9 @@ from config import *
 from helper_func import *
 from database.database import *
 
+admin = filters.user(ADMINS)
+
+
 # Don't Remove Credit @CodeFlix_Bots, @rohit_1888
 # Ask Doubt on telegram @CodeflixSupport
 #
