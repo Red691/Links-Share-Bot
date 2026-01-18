@@ -308,8 +308,8 @@ async def is_approval_off(channel_id: int) -> bool:
 
 class Database:
     def __init__(self):
-        self.fsub_data = mongo_db["force_sub_channels"]
-        self.rqst_fsub_Channel_data = mongo_db["force_sub_requests"]
+        self.fsub_data = database["force_sub_channels"]
+        self.rqst_fsub_Channel_data = database["force_sub_requests"]
 
     # ---------- CHANNEL MANAGEMENT ----------
 
