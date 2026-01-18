@@ -390,3 +390,17 @@ async def is_approval_off(channel_id: int) -> bool:
             #print(f"Channel {channel_id} NOT found in the database.")
             return False
 
+# FSub Channels
+db.channel_exist = channel_exist
+db.add_channel = add_channel
+db.rem_channel = rem_channel
+db.show_channels = show_channels
+db.get_channel_mode = get_channel_mode
+db.set_channel_mode = set_channel_mode
+
+# Request Force-Sub
+db.req_user = req_user
+db.del_req_user = del_req_user
+db.req_user_exist = req_user_exist
+db.reqChannel_exist = req_channel_exist
+
