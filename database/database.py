@@ -305,35 +305,33 @@ async def is_approval_off(channel_id: int) -> bool:
     except Exception as e:
         print(f"Error checking approval_off for channel {channel_id}: {e}")
         return False
-        
-# CHANNEL MANAGEMENT
-    
+
+class Database:
+    def __init__(self):
+        self.fsub_data = mongo_db["force_sub_channels"]
+        self.rqst_fsub_Channel_data = mongo_db["force_sub_requests"]
+
+    # ---------- CHANNEL MANAGEMENT ----------
+
     async def channel_exist(self, channel_id: int):
         found = await self.fsub_data.find_one({'_id': channel_id})
         return bool(found)
 
     async def add_channel(self, channel_id: int):
         if not await self.channel_exist(channel_id):
-            await self.fsub_data.insert_one({'_id': channel_id})
-            return
+            await self.fsub_data.insert_one({'_id': channel_id, "mode": "off"})
 
     async def rem_channel(self, channel_id: int):
-        if await self.channel_exist(channel_id):
-            await self.fsub_data.delete_one({'_id': channel_id})
-            return
+        await self.fsub_data.delete_one({'_id': channel_id})
 
     async def show_channels(self):
-        channel_docs = await self.fsub_data.find().to_list(length=None)
-        channel_ids = [doc['_id'] for doc in channel_docs]
-        return channel_ids
+        docs = await self.fsub_data.find().to_list(length=None)
+        return [doc['_id'] for doc in docs]
 
-    
-# Get current mode of a channel
     async def get_channel_mode(self, channel_id: int):
         data = await self.fsub_data.find_one({'_id': channel_id})
         return data.get("mode", "off") if data else "off"
 
-    # Set mode of a channel
     async def set_channel_mode(self, channel_id: int, mode: str):
         await self.fsub_data.update_one(
             {'_id': channel_id},
@@ -341,66 +339,33 @@ async def is_approval_off(channel_id: int) -> bool:
             upsert=True
         )
 
-    # REQUEST FORCE-SUB MANAGEMENT
+    # ---------- REQUEST FORCE SUB MANAGEMENT ----------
 
-    # Add the user to the set of users for a   specific channel
     async def req_user(self, channel_id: int, user_id: int):
-        try:
-            await self.rqst_fsub_Channel_data.update_one(
-                {'_id': int(channel_id)},
-                {'$addToSet': {'user_ids': int(user_id)}},
-                upsert=True
-            )
-        except Exception as e:
-            print(f"[DB ERROR] Failed to add user to request list: {e}")
-
-
-    # Method 2: Remove a user from the channel set
-    async def del_req_user(self, channel_id: int, user_id: int):
-        # Remove the user from the set of users for the channel
         await self.rqst_fsub_Channel_data.update_one(
-            {'_id': channel_id}, 
+            {'_id': channel_id},
+            {'$addToSet': {'user_ids': user_id}},
+            upsert=True
+        )
+
+    async def del_req_user(self, channel_id: int, user_id: int):
+        await self.rqst_fsub_Channel_data.update_one(
+            {'_id': channel_id},
             {'$pull': {'user_ids': user_id}}
         )
 
-    # Check if the user exists in the set of the channel's users
     async def req_user_exist(self, channel_id: int, user_id: int):
-        try:
-            found = await self.rqst_fsub_Channel_data.find_one({
-                '_id': int(channel_id),
-                'user_ids': int(user_id)
-            })
-            return bool(found)
-        except Exception as e:
-            print(f"[DB ERROR] Failed to check request list: {e}")
-            return False  
+        found = await self.rqst_fsub_Channel_data.find_one({
+            '_id': channel_id,
+            'user_ids': user_id
+        })
+        return bool(found)
 
-
-    # Method to check if a channel exists using show_channels
     async def reqChannel_exist(self, channel_id: int):
-    # Get the list of all channel IDs from the database
         channel_ids = await self.show_channels()
-        #print(f"All channel IDs in the database: {channel_ids}")
+        return channel_id in channel_ids
 
-    # Check if the given channel_id is in the list of channel IDs
-        if channel_id in channel_ids:
-            #print(f"Channel {channel_id} found in the database.")
-            return True
-        else:
-            #print(f"Channel {channel_id} NOT found in the database.")
-            return False
 
-# FSub Channels
-db.channel_exist = channel_exist
-db.add_channel = add_channel
-db.rem_channel = rem_channel
-db.show_channels = show_channels
-db.get_channel_mode = get_channel_mode
-db.set_channel_mode = set_channel_mode
-
-# Request Force-Sub
-db.req_user = req_user
-db.del_req_user = del_req_user
-db.req_user_exist = req_user_exist
-db.reqChannel_exist = req_channel_exist
-
+# ✅ Create global db object
+db = Database()
+        
