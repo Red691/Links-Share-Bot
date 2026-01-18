@@ -10,7 +10,7 @@ from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.filters import Filter
 from config import OWNER_ID
-from database.database import is_admin
+from database.database import is_admin, db
 
 class IsAdmin(Filter):
     async def __call__(self, client, message):
