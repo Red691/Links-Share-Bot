@@ -5,16 +5,16 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 # Recommended
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "8247132120:AAF5zel-SHM7oTXHj2fxyPlh-CB_0HbFqL4")
 APP_ID = int(os.environ.get("APP_ID", ""))
 API_HASH = os.environ.get("API_HASH", "")
 
 # Main
-OWNER_ID = int(os.environ.get("OWNER_ID", "6497757690"))
+OWNER_ID = int(os.environ.get("OWNER_ID", "5770911041"))
 PORT = os.environ.get("PORT", "8080")
 
 # Database
-DB_URI = os.environ.get("DB_URI", "")
+DB_URI = os.environ.get("DB_URI", "mongodb+srv://kumarnikhil6773:kumarnikhil6773201700@file-store-bot.zffpmw9.mongodb.net/?appName=File-store-bot")
 DB_NAME = os.environ.get("DB_NAME", "link")
 
 #Auto approve 
@@ -69,7 +69,7 @@ except ValueError:
 
 # Admin == OWNER_ID
 ADMINS.append(OWNER_ID)
-ADMINS.append(6497757690)
+ADMINS.append(5770911041)
 
 
 logging.basicConfig(
