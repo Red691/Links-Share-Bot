@@ -3,7 +3,7 @@ from pyrogram import filters, Client
 from pyrogram.enums import ChatMemberStatus, ChatType
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ChatMemberUpdated
 from config import ADMINS
-import database.database import db
+from database.database import db
 from helper_func import is_owner_or_admin, is_subscribed
 from bot import Bot
 # ---------------- ADD CHANNEL ---------------- #
