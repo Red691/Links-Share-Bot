@@ -256,3 +256,45 @@ async def is_approval_off(channel_id: int) -> bool:
     except Exception as e:
         print(f"Error checking approval_off for channel {channel_id}: {e}")
         return False
+
+
+
+# ---------- DB WRAPPER OBJECT ---------- #
+
+class DB:
+    pass
+
+db = DB()
+
+# User
+db.add_user = add_user
+db.present_user = present_user
+db.full_userbase = full_userbase
+db.del_user = del_user
+db.is_admin = is_admin
+db.add_admin = add_admin
+db.remove_admin = remove_admin
+db.list_admins = list_admins
+
+# FSub Channels
+db.channel_exist = channel_exist
+db.add_channel = add_channel
+db.rem_channel = rem_channel
+db.show_channels = show_channels
+db.get_channel_mode = get_channel_mode
+db.set_channel_mode = set_channel_mode
+
+# Request Force-Sub
+db.req_user = req_user
+db.del_req_user = del_req_user
+db.req_user_exist = req_user_exist
+db.reqChannel_exist = req_channel_exist
+
+# Normal Channels
+db.save_channel = save_channel
+db.get_channels = get_channels
+db.delete_channel = delete_channel
+
+# Approval
+db.set_approval_off = set_approval_off
+db.is_approval_off = is_approval_off
